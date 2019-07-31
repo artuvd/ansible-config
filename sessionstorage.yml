@@ -1,0 +1,11 @@
+- name: configure the master redis server
+  hosts: ss-redis-master
+  roles:
+    - sessionstorage
+
+- name: configure redis slaves
+  hosts: ss-redis-slaves
+  vars:
+    - redis_slaveof: ss-redis-master 6379
+  roles:
+    - sessionstorage

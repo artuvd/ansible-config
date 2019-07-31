@@ -136,3 +136,16 @@
     dest: /etc/php/7.1/fpm/php.ini
     regexp: "date.timezone ="
     line: "date.timezone = UTC"
+
+#Mount NFS
+- name: Ensure that NFS utility exist
+  become: true
+  apt:
+    name: nfs-common
+    state: present
+
+- name: Make NFS connection persistant
+  become: true
+  lineinfile:
+    path: /etc/fstab
+    line: {{ nfs_server_ip}}:{{nfs_path}} /mnt/ nfs auto,noatime,nolock,bg,nfsvers=4,intr,tcp,actimeo=600 0 0

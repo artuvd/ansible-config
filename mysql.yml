@@ -1,0 +1,15 @@
+- name: configure the master mysql server
+  hosts: mysql-master
+  vars:
+    - mysql_server_id: 1
+    - mysql_replication_role: master
+  roles:
+    - mysql
+
+- name: configure mysql slaves
+  hosts: mysql-slave
+  vars:
+    - mysql_server_id: 2
+    - mysql_replication_role: slave
+  roles:
+    - mysql

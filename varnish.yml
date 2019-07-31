@@ -1,0 +1,4 @@
+---
+-hosts: varnish
+ roles:
+   - varnish

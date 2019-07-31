@@ -1,0 +1,11 @@
+- name: configure the master redis server
+  hosts: cache-redis-master
+  roles:
+    - cache
+
+- name: configure redis slaves
+  hosts: cache-redis-slave
+  vars:
+    - redis_slaveof: redis-master 6379
+  roles:
+    - cache
