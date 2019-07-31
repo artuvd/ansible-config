@@ -141,15 +141,6 @@
     - DELETE FROM mysql.user WHERE User='{{ mysql_root_username }}' AND Host NOT IN ('localhost', '127.0.0.1', '::1')
   changed_when: false
 
-- name: Allow webserver queries
-  shell: >
-    mysql -u root -NBe
-    'update db set Host='{{ item }}' where db='database';
-     update user set Host='{{ item }}' where user='user';
-     GRANT ALL PRIVILEGES ON *.* TO 'user'@'{{ item }}' IDENTIFIED BY 'password';
-     flush privileges;'
-  with_items: {{ webserver_ips}}
-
 - name: Get list of hosts for the root user.
   command: mysql -NBe
     "SELECT Host
@@ -227,6 +218,14 @@
     encrypted: "{{ item.encrypted | default('no') }}"
   with_items: "{{ mysql_users }}"
   no_log: true
+
+- name: Allow webserver queries
+  command: mysql -u root -NBe
+    'update db set Host='{{ item }}' where db='{{ mysql_databases }}';
+     update user set Host='{{ item }}' where user='{{ mysql_user_name }}';
+     GRANT ALL PRIVILEGES ON *.* TO '{{ mysql_user_name }}'@'{{ item }}' IDENTIFIED BY '{{ mysql_user_password }}';
+     flush privileges;'
+  with_items: {{ webserver_ips}}
 
 - name: Ensure replication user exists on master.
   mysql_user:
